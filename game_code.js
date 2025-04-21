@@ -5,9 +5,9 @@ class Example extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('box', 'assets/sprites/rat.png');      // Make sure this file exists at assets/rat.png
-        this.load.image('apple', 'assets/sprites/cheese.png'); // Make sure this file exists at assets/cheese.png
-    }
+    this.load.image('box', 'assets/sprites/rat.png');      // rat image
+    this.load.image('apple', 'assets/sprites/cheese.png'); // cheese image
+}
 
     create() {
         // Player box
