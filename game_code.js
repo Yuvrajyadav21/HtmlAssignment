@@ -15,7 +15,7 @@ class Example extends Phaser.Scene {
         this.load.image('player', 'assets/sprites/box.png');
         this.load.image('apple', 'assets/sprites/apple.png');
         this.load.image('sky', 'assets/sprites/Sky.png');
-        this.load.image('ground', 'assets/sprites/Ground.png');
+        this.load.image('ground', 'assets/sprites/ground.png');
     }
 
     create() {
