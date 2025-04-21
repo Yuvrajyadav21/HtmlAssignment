@@ -2,34 +2,38 @@ class Example extends Phaser.Scene {
     constructor() {
         super({ key: 'Example' });
         this.appleCount = 0;
+        this.sprite = null;
+        this.cursors = null;
+        this.appleGroup = null;
+        this.text = null;
     }
 
     preload() {
-    this.load.image('box', 'assets/sprites/box.png');
-    this.load.image('apple', 'assets/sprites/apple.png');
-}
+        this.load.image('box', 'assets/sprites/box.png');
+        this.load.image('apple', 'assets/sprites/apple.png');
+    }
 
     create() {
-        // Player box
+        // Create player sprite
         this.sprite = this.physics.add.image(400, 550, 'box');
         this.sprite.setCollideWorldBounds(true);
 
-        // Falling apple group
+        // Group for falling apples
         this.appleGroup = this.physics.add.group();
 
-        // Apple count text
+        // Display collected apples count
         this.text = this.add.text(10, 10, 'Apples Collected: 0', {
             font: '24px Courier',
             fill: '#ffffff'
         });
 
-        // Controls
+        // Enable keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // Overlap check
+        // Collision detection between player and apples
         this.physics.add.overlap(this.sprite, this.appleGroup, this.collectApple, null, this);
 
-        // Drop apples at intervals
+        // Repeatedly drop apples
         this.time.addEvent({
             delay: 1000,
             callback: this.dropApple,
@@ -47,7 +51,7 @@ class Example extends Phaser.Scene {
             this.sprite.setVelocityX(200);
         }
 
-        // Destroy apples that fall beyond screen
+        // Destroy apples that fall off the screen
         this.appleGroup.getChildren().forEach(apple => {
             if (apple.y > 600) {
                 apple.destroy();
@@ -68,7 +72,7 @@ class Example extends Phaser.Scene {
     }
 }
 
-// Phaser game config
+// Phaser game configuration
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -84,4 +88,5 @@ const config = {
     scene: Example
 };
 
+// Launch the game
 const game = new Phaser.Game(config);
