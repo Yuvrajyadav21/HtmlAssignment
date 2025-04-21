@@ -20,16 +20,15 @@ class Example extends Phaser.Scene {
     }
 
     create() {
-        // Add background
-        this.add.image(0, 0, 'sky').setOrigin(0);
+        // Add background behind everything
+        this.add.image(0, 0, 'sky').setOrigin(0).setDepth(-1);
         
-        // Create GROUND - now truly static and immovable
+        // Create GROUND - truly static and immovable
         this.ground = this.physics.add.staticGroup();
         const ground = this.ground.create(400, 580, 'ground')
             .setScale(2, 0.5)
             .refreshBody();
         
-        // Make ground immovable
         ground.body.immovable = true;
         ground.body.moves = false;
 
@@ -52,10 +51,13 @@ class Example extends Phaser.Scene {
         this.physics.add.collider(
             this.apples,
             this.ground,
-            (apple) => apple.destroy() // Ground persists
+            (apple, ground) => {
+                apple.destroy(); // Only destroy the apple, not the ground!
+            }
         );
 
         // Score display
+        this.appleCount = 0;
         this.scoreText = this.add.text(20, 20, 'Apples: 0', {
             font: '28px Arial',
             fill: '#ffffff',
@@ -118,9 +120,9 @@ class Example extends Phaser.Scene {
 
     collectApple(player, apple) {
         apple.destroy();
-        this.appleCount = (this.appleCount || 0) + 1;
+        this.appleCount++;
         this.scoreText.setText(`Apples: ${this.appleCount}`);
-        
+
         // Visual feedback
         this.tweens.add({
             targets: player,
