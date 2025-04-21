@@ -1,6 +1,4 @@
-
-
-   class Example extends Phaser.Scene {
+class Example extends Phaser.Scene {
     constructor() {
         super({ key: 'Example' });
         this.appleCount = 0;
@@ -14,8 +12,8 @@
         // Load assets
         this.load.image('player', 'assets/sprites/box.png');
         this.load.image('apple', 'assets/sprites/apple.png');
-        this.load.image('sky', 'assets/sprites/Sky.png');
         this.load.image('ground', 'assets/sprites/ground.png');
+        
         // Create simple blue sky background programmatically
         const skyColor = this.textures.createCanvas('sky', 800, 600);
         const ctx = skyColor.getContext();
@@ -25,7 +23,7 @@
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 800, 600);
         skyColor.refresh();
-    };
+    }
 
     create() {
         // Add background
@@ -38,12 +36,12 @@
             .refreshBody();
         
         // Create player positioned above the ground
-        this.player = this.physics.add.sprite(400, 530, 'player') // 530 = 580-50 (ground height - player height)
+        this.player = this.physics.add.sprite(400, 530, 'player')
             .setCollideWorldBounds(true)
             .setBounce(0.2)
             .setScale(0.8)
             .setDragX(300)
-            .setSize(40, 40) // Adjust collision box
+            .setSize(40, 40)
             .setOffset(5, 5);
 
         // Enable collision with ground
@@ -51,6 +49,11 @@
 
         // Group for falling apples
         this.appleGroup = this.physics.add.group();
+
+        // Destroy apples when they hit the ground
+        this.physics.add.collider(this.appleGroup, this.ground, (apple) => {
+            apple.destroy();
+        });
 
         // Score text
         this.text = this.add.text(20, 20, 'Apples Collected: 0', {
@@ -71,7 +74,7 @@
         this.time.addEvent({
             delay: 1000,
             callback: () => {
-                if (this.appleGroup.getLength() < 2) { // Only 2 apples max
+                if (this.appleGroup.getLength() < 4) { // Slightly higher limit for buffer
                     this.dropApple();
                     this.dropApple();
                 }
@@ -96,6 +99,13 @@
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.player.body.touching.down) {
             this.player.setVelocityY(-400);
         }
+
+        // Clean up any apples that fall below screen (safety)
+        this.appleGroup.getChildren().forEach(apple => {
+            if (apple.y > 600) {
+                apple.destroy();
+            }
+        });
     }
 
     dropApple() {
@@ -135,7 +145,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false // Set to true to see collision boxes if needed
+            debug: false
         }
     },
     scene: Example
