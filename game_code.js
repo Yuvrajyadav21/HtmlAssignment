@@ -9,13 +9,9 @@ class Example extends Phaser.Scene {
     }
 
     preload() {
-        this.load.on('loaderror', function (file) {
-    console.error('❌ Failed to load:', file.src);
-});
-
-        this.load.image('box', 'assets/sprites/box.png');
-        this.load.image('apple', 'assets/sprites/apple.png');
-    }
+    this.load.image('box', 'assets/sprites/box.png');
+    this.load.image('apple', 'assets/sprites/apple.png');
+}
 
     create() {
         // Create player sprite
