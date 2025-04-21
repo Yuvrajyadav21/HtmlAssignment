@@ -1,13 +1,12 @@
 class Example extends Phaser.Scene {
-    cursors;
-    text;
-    appleGroup;
-    sprite;
-    appleCount = 0;
+    constructor() {
+        super({ key: 'Example' });
+        this.appleCount = 0;
+    }
 
     preload() {
-        this.load.image('box', 'assets/rat.png');      // renamed rat.png to box
-        this.load.image('apple', 'assets/cheese.png'); // renamed cheese.png to apple
+        this.load.image('box', 'assets/rat.png');      // Make sure this file exists at assets/rat.png
+        this.load.image('apple', 'assets/cheese.png'); // Make sure this file exists at assets/cheese.png
     }
 
     create() {
@@ -48,7 +47,7 @@ class Example extends Phaser.Scene {
             this.sprite.setVelocityX(200);
         }
 
-        // Optional: destroy missed apples
+        // Destroy apples that fall beyond screen
         this.appleGroup.getChildren().forEach(apple => {
             if (apple.y > 600) {
                 apple.destroy();
@@ -60,8 +59,6 @@ class Example extends Phaser.Scene {
         const x = Phaser.Math.Between(50, 750);
         const apple = this.appleGroup.create(x, 0, 'apple');
         apple.setVelocityY(150);
-        apple.setCollideWorldBounds(true);
-        apple.setBounce(0);
     }
 
     collectApple(player, apple) {
@@ -71,6 +68,7 @@ class Example extends Phaser.Scene {
     }
 }
 
+// Phaser game config
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -79,7 +77,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: 0,
+            gravity: { y: 0 },
             debug: false
         }
     },
