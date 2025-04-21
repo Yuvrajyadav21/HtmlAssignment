@@ -6,17 +6,23 @@ class Example extends Phaser.Scene {
     preload() {
         this.load.image('player', 'assets/sprites/box.png');
         this.load.image('apple', 'assets/sprites/apple.png');
-        this.load.image('ground', 'assets/sprites/ground.png');
 
         // Create sky background
         const skyTexture = this.textures.createCanvas('sky', 800, 600);
-        const ctx = skyTexture.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 600);
+        const skyCtx = skyTexture.getContext('2d');
+        const gradient = skyCtx.createLinearGradient(0, 0, 0, 600);
         gradient.addColorStop(0, '#87CEEB');
         gradient.addColorStop(1, '#E0F7FA');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 800, 600);
+        skyCtx.fillStyle = gradient;
+        skyCtx.fillRect(0, 0, 800, 600);
         skyTexture.refresh();
+
+        // Create ground background (flat green platform)
+        const groundTexture = this.textures.createCanvas('groundCanvas', 800, 40);
+        const groundCtx = groundTexture.getContext('2d');
+        groundCtx.fillStyle = '#228B22'; // Forest green
+        groundCtx.fillRect(0, 0, 800, 40);
+        groundTexture.refresh();
     }
 
     create() {
@@ -24,8 +30,8 @@ class Example extends Phaser.Scene {
 
         // GROUND
         this.ground = this.physics.add.staticGroup();
-        const ground = this.ground.create(400, 570, 'ground'); // Position near bottom
-        ground.setScale(2, 0.2).refreshBody(); // Make it wide but short
+        const ground = this.ground.create(400, 580, 'groundCanvas'); // 580 = bottom
+        ground.refreshBody();
 
         // PLAYER
         this.player = this.physics.add.sprite(400, 500, 'player')
@@ -44,7 +50,7 @@ class Example extends Phaser.Scene {
         this.physics.add.collider(
             this.apples,
             this.ground,
-            (apple, ground) => apple.destroy() // Destroy only apple
+            (apple, ground) => apple.destroy()
         );
 
         // SCORE
@@ -56,7 +62,6 @@ class Example extends Phaser.Scene {
             strokeThickness: 4
         });
 
-        // INPUT
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.physics.add.overlap(this.player, this.apples, this.collectApple, null, this);
