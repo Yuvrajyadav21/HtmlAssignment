@@ -5,8 +5,8 @@ class Example extends Phaser.Scene {
     }
 
     preload() {
-    this.load.image('box', 'assets/sprites/rat.png');      // rat image
-    this.load.image('apple', 'assets/sprites/cheese.png'); // cheese image
+    this.load.image('box', 'assets/sprites/box.png');
+    this.load.image('apple', 'assets/sprites/apple.png');
 }
 
     create() {
