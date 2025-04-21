@@ -23,17 +23,17 @@ class Example extends Phaser.Scene {
         // Add background behind everything
         this.add.image(0, 0, 'sky').setOrigin(0).setDepth(-1);
         
-        // Create GROUND - truly static and immovable
+        // Create GROUND - moved up
         this.ground = this.physics.add.staticGroup();
-        const ground = this.ground.create(400, 580, 'ground')
+        const ground = this.ground.create(400, 520, 'ground') // Moved up from 580
             .setScale(2, 0.5)
             .refreshBody();
         
         ground.body.immovable = true;
         ground.body.moves = false;
 
-        // Create PLAYER
-        this.player = this.physics.add.sprite(400, 500, 'player')
+        // Create PLAYER - also moved up
+        this.player = this.physics.add.sprite(400, 450, 'player') // Moved up from 500
             .setCollideWorldBounds(true)
             .setBounce(0.1)
             .setScale(0.8)
@@ -90,7 +90,7 @@ class Example extends Phaser.Scene {
     dropApple() {
         const apple = this.apples.create(
             Phaser.Math.Between(100, 700),
-            -50,
+            -20, // Slightly higher to give player a better chance
             'apple'
         )
         .setScale(0.7)
