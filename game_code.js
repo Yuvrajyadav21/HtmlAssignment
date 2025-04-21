@@ -7,8 +7,8 @@ class Example extends Phaser.Scene {
         this.load.image('player', 'assets/sprites/box.png');
         this.load.image('apple', 'assets/sprites/apple.png');
         this.load.image('ground', 'assets/sprites/ground.png');
-        
-        // Create sky background programmatically
+
+        // Create sky background
         const skyTexture = this.textures.createCanvas('sky', 800, 600);
         const ctx = skyTexture.getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 600);
@@ -20,20 +20,15 @@ class Example extends Phaser.Scene {
     }
 
     create() {
-        // Add background behind everything
-        this.add.image(0, 0, 'sky').setOrigin(0).setDepth(-1);
-        
-        // Create GROUND - moved up
-        this.ground = this.physics.add.staticGroup();
-        const ground = this.ground.create(400, 520, 'ground') // Moved up from 580
-            .setScale(2, 0.5)
-            .refreshBody();
-        
-        ground.body.immovable = true;
-        ground.body.moves = false;
+        this.add.image(0, 0, 'sky').setOrigin(0);
 
-        // Create PLAYER - also moved up
-        this.player = this.physics.add.sprite(400, 450, 'player') // Moved up from 500
+        // GROUND
+        this.ground = this.physics.add.staticGroup();
+        const ground = this.ground.create(400, 570, 'ground'); // Position near bottom
+        ground.setScale(2, 0.2).refreshBody(); // Make it wide but short
+
+        // PLAYER
+        this.player = this.physics.add.sprite(400, 500, 'player')
             .setCollideWorldBounds(true)
             .setBounce(0.1)
             .setScale(0.8)
@@ -41,22 +36,18 @@ class Example extends Phaser.Scene {
             .setSize(40, 40)
             .setOffset(5, 5);
 
-        // Player-ground collision
         this.physics.add.collider(this.player, this.ground);
 
-        // APPLES group
+        // APPLES
         this.apples = this.physics.add.group();
 
-        // Apple-ground collision (only destroys apples)
         this.physics.add.collider(
             this.apples,
             this.ground,
-            (apple, ground) => {
-                apple.destroy(); // Only destroy the apple, not the ground!
-            }
+            (apple, ground) => apple.destroy() // Destroy only apple
         );
 
-        // Score display
+        // SCORE
         this.appleCount = 0;
         this.scoreText = this.add.text(20, 20, 'Apples: 0', {
             font: '28px Arial',
@@ -65,13 +56,12 @@ class Example extends Phaser.Scene {
             strokeThickness: 4
         });
 
-        // Controls
+        // INPUT
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // Apple collection
         this.physics.add.overlap(this.player, this.apples, this.collectApple, null, this);
 
-        // Apple spawner (2 per second)
+        // SPAWN
         this.time.addEvent({
             delay: 1000,
             callback: this.dropApples,
@@ -90,7 +80,7 @@ class Example extends Phaser.Scene {
     dropApple() {
         const apple = this.apples.create(
             Phaser.Math.Between(100, 700),
-            -20, // Slightly higher to give player a better chance
+            -20,
             'apple'
         )
         .setScale(0.7)
@@ -99,7 +89,6 @@ class Example extends Phaser.Scene {
     }
 
     update() {
-        // Movement
         this.player.setVelocityX(0);
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-300);
@@ -107,12 +96,10 @@ class Example extends Phaser.Scene {
             this.player.setVelocityX(300);
         }
 
-        // Jumping
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-400);
         }
 
-        // Clean up fallen apples
         this.apples.getChildren().forEach(apple => {
             if (apple.y > 600) apple.destroy();
         });
@@ -123,7 +110,6 @@ class Example extends Phaser.Scene {
         this.appleCount++;
         this.scoreText.setText(`Apples: ${this.appleCount}`);
 
-        // Visual feedback
         this.tweens.add({
             targets: player,
             scaleX: 1.1,
@@ -134,7 +120,6 @@ class Example extends Phaser.Scene {
     }
 }
 
-// Game config
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -143,7 +128,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false // Set to true to see collision boxes
+            debug: false
         }
     },
     scene: Example
