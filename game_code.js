@@ -6,6 +6,7 @@ class Example extends Phaser.Scene {
     preload() {
         this.load.image('player', 'assets/sprites/box.png');
         this.load.image('apple', 'assets/sprites/apple.png');
+        this.load.audio('bgMusic', 'assets/audio/bgmusic.mp3');
 
         // Create sky background
         const skyTexture = this.textures.createCanvas('sky', 800, 600);
@@ -17,10 +18,10 @@ class Example extends Phaser.Scene {
         skyCtx.fillRect(0, 0, 800, 600);
         skyTexture.refresh();
 
-        // Create ground background (flat green platform)
+        // Create ground background
         const groundTexture = this.textures.createCanvas('groundCanvas', 800, 40);
         const groundCtx = groundTexture.getContext('2d');
-        groundCtx.fillStyle = '#228B22'; // Forest green
+        groundCtx.fillStyle = '#228B22';
         groundCtx.fillRect(0, 0, 800, 40);
         groundTexture.refresh();
     }
@@ -28,19 +29,25 @@ class Example extends Phaser.Scene {
     create() {
         this.add.image(0, 0, 'sky').setOrigin(0);
 
+        // Credit Text - Top Right
+        this.add.text(780, 20, 'Made By Yuvraj Yadav', {
+            font: '20px Arial',
+            fill: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(1, 0);
+
+        // Background Music
+        this.bgMusic = this.sound.add('bgMusic', {
+            loop: true,
+            volume: 0.5
+        });
+        this.bgMusic.play();
+
         // GROUND
         this.ground = this.physics.add.staticGroup();
-        const ground = this.ground.create(400, 580, 'groundCanvas'); // 580 = bottom
+        const ground = this.ground.create(400, 580, 'groundCanvas');
         ground.refreshBody();
-
-        // CREDIT TEXT - Top Right Corner
-this.add.text(780, 20, 'Made By Yuvraj Yadav', {
-    font: '20px Arial',
-    fill: '#ffffff',
-    stroke: '#000000',
-    strokeThickness: 3
-}).setOrigin(1, 0); // Align right top
-
 
         // PLAYER
         this.player = this.physics.add.sprite(400, 500, 'player')
@@ -75,7 +82,7 @@ this.add.text(780, 20, 'Made By Yuvraj Yadav', {
 
         this.physics.add.overlap(this.player, this.apples, this.collectApple, null, this);
 
-        // SPAWN
+        // SPAWN APPLES
         this.time.addEvent({
             delay: 1000,
             callback: this.dropApples,
