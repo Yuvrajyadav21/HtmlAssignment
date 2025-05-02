@@ -33,6 +33,15 @@ class Example extends Phaser.Scene {
         const ground = this.ground.create(400, 580, 'groundCanvas'); // 580 = bottom
         ground.refreshBody();
 
+        // CREDIT TEXT - Top Right Corner
+this.add.text(780, 20, 'Made By Yuvraj Yadav', {
+    font: '20px Arial',
+    fill: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 3
+}).setOrigin(1, 0); // Align right top
+
+
         // PLAYER
         this.player = this.physics.add.sprite(400, 500, 'player')
             .setCollideWorldBounds(true)
